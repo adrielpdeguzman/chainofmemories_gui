@@ -11,7 +11,10 @@
 |
 */
 
-Route::get('/', function()
+Route::get('/', 'HomeController@showWelcome');
+
+Route::group(array('prefix' => 'journals'), function()
 {
-	return View::make('hello');
+    Route::get('volume/{volume}', 'JournalController@showVolume');
 });
+Route::resource('journals', 'JournalController');
