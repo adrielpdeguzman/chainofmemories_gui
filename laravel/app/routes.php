@@ -10,6 +10,10 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+Route::get('login', function()
+{
+    return 's';
+});
 
 Route::get('/', 'HomeController@showWelcome');
 

@@ -9,7 +9,7 @@ class JournalController extends \BaseController {
 	 */
 	public function index()
 	{
-		//
+		Auth::login(User::find(1));
 	}
 
 
