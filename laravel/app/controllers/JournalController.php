@@ -9,7 +9,7 @@ class JournalController extends \BaseController {
 	 */
 	public function index()
 	{
-		Auth::login(User::find(1));
+		return Redirect::to(Request::url() . '/volume/1');
 	}
 
 
@@ -20,7 +20,24 @@ class JournalController extends \BaseController {
 	 */
 	public function create()
 	{
-		//
+        $dates_without_entry = $this->getJSONFromURL(Config::get('constants.API_URL') . 'journals/getDatesWithoutEntry');
+
+		return View::make('journals.form', compact('dates_without_entry'));
+	}
+
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+        $url = Config::get('constants.API_URL') . 'journals';
+
+        $result = $this->sendPostRequestToURL($url, Input::all());
+
+        dd($result);
 	}
 
 
@@ -49,9 +66,35 @@ class JournalController extends \BaseController {
 		//
 	}
 
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		//
+	}
+
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		//
+	}
+
     public function showVolume($volume)
     {
-        $journals = $this->getJSONFromURL('http://localhost:8080/api/v1/journals/volume/' . $volume);
+        $url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
+        $journals = $this->getJSONFromURL($url);
+
 
         return View::make('journals.volume', compact('journals'));
     }

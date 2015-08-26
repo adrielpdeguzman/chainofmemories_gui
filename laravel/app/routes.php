@@ -10,15 +10,18 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
-Route::get('login', function()
-{
-    return 's';
-});
-
 Route::get('/', 'HomeController@showWelcome');
+Route::get('login', 'HomeController@login');
+Route::post('login', 'HomeController@doLogin');
+Route::get('logout', 'HomeController@doLogout');
 
-Route::group(array('prefix' => 'journals'), function()
+Route::group(['before' => 'login'], function()
 {
-    Route::get('volume/{volume}', 'JournalController@showVolume');
+    Route::post('logout', 'HomeController@doLogout');
+
+    Route::group(['prefix' => 'journals'], function()
+    {
+        Route::get('volume/{volume}', 'JournalController@showVolume');
+    });
+    Route::resource('journals', 'JournalController');
 });
-Route::resource('journals', 'JournalController');
