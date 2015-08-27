@@ -95,7 +95,6 @@ class JournalController extends \BaseController {
         $url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
         $journals = $this->getJSONFromURL($url);
 
-
         return View::make('journals.volume', compact('journals'));
     }
 

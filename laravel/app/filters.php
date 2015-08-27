@@ -91,7 +91,7 @@ Route::filter('csrf', function()
 
 Route::filter('login', function()
 {
-    if ( ! Session::has('user'))
+    if ( ! Session::has('access_token'))
     {
         return Redirect::to('login');
     }

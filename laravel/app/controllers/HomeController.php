@@ -49,16 +49,14 @@ class HomeController extends BaseController {
 
         $result = json_decode($this->sendPostRequestToURL($url, $credentials));
 
-        dd($result);
-
-        if ( ! isset($result->user))
+        if (isset($result->error))
         {
             return Redirect::to('login')
                 ->withInput(Input::except('password'))
-                ->with('message', $result->message);
+                ->with('message', $result->error_description);
         }
 
-        Session::put('user', $credentials);
+        Session::put('access_token', ($result->access_token));
 
         return Redirect::to('/');
     }

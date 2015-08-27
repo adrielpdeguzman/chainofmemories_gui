@@ -15,14 +15,9 @@ class BaseController extends Controller {
 		}
 	}
 
-    protected function getUserCredentials()
+    protected function getOAuthCredentials()
     {
-        $credentials = [
-            'username' => Session::get('user.username'),
-            'password' => Session::get('user.password')
-        ];
-
-        return $credentials['username'] . ':' . $credentials['password'];
+        return Config::get('constants.CLIENT_ID') . ':' . Config::get('constants.CLIENT_SECRET');
     }
 
     protected function getJSONFromURL($url)
@@ -31,8 +26,9 @@ class BaseController extends Controller {
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->getUserCredentials());
-        curl_setopt($ch, CURLOPT_URL,$url);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization', 'Bearer ' . Session::get('access_token')]);
+        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_URL,$url . '?access_token=' . Session::get('access_token'));
 
         $result = curl_exec($ch);
 
