@@ -49,7 +49,8 @@ class JournalController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$journal = $this->getJSONFromURL('http://localhost:8080/api/v1/journals/' . $id);
+		$url = Config::get('constants.API_URL') . 'journals/' . $id;
+        $journal = $this->getJSONFromURL($url);
 
         return View::make('journals.show', compact('journal'));
 	}
@@ -96,6 +97,14 @@ class JournalController extends \BaseController {
         $journals = $this->getJSONFromURL($url);
 
         return View::make('journals.volume', compact('journals'));
+    }
+
+    public function random($id)
+    {
+        $url = Config::get('constants.API_URL') . 'journals/random';
+        $journal = $this->getJSONFromURL($url);
+
+        return View::make('journals.show', compact('journal'));
     }
 
 }
