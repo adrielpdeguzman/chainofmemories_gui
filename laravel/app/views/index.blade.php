@@ -12,7 +12,7 @@
                 <p>Re-visit the memoires of the past, chapter by chapter in this section! Here, we'll find those forgotten conversations and events, as detailed as possible!</p>
                 <p>{{ link_to('journals/', 'View Journals &raquo;', array('class' => 'btn btn-default')) }}</p>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 hidden">
                 <h3>Messages</h3>
                 <p>Catch those simple, yet memorable text messages! Have you forgotten a small fact that could affect your relationship? Head over here and have a review!</p>
                 <p>{{ link_to('messages/', 'View Messages &raquo;', array('class' => 'btn btn-default')) }}</p>

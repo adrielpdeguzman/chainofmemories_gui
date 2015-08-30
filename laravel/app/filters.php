@@ -93,6 +93,6 @@ Route::filter('login', function()
 {
     if ( ! Session::has('access_token'))
     {
-        return Redirect::to('login');
+        return Redirect::guest('login');
     }
 });

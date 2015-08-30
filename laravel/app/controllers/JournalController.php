@@ -22,7 +22,7 @@ class JournalController extends \BaseController {
 	{
         $dates_without_entry = $this->getJSONFromURL(Config::get('constants.API_URL') . 'journals/getDatesWithoutEntry');
 
-		return View::make('journals.form', compact('dates_without_entry'));
+		return View::make('journals.create', compact('dates_without_entry'));
 	}
 
 
@@ -34,10 +34,20 @@ class JournalController extends \BaseController {
 	public function store()
 	{
         $url = Config::get('constants.API_URL') . 'journals';
+        $data = [
+            'publish_date'  => Input::get('publish_date'),
+            'contents'      => Input::get('contents'),
+            'special_events'=> Input::get('special_events')
+        ];
 
-        $result = $this->sendPostRequestToURL($url, Input::all());
+        $result = json_decode($this->sendCurlRequestToURL($url, json_encode($data)), true);
 
-        dd($result);
+        if(isset($result['error']))
+        {
+            return Redirect::to('/journals/create')->withInput()->with('message', $result['error_description']);
+        }
+
+        return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been created!');
 	}
 
 
@@ -50,9 +60,9 @@ class JournalController extends \BaseController {
 	public function show($id)
 	{
 		$url = Config::get('constants.API_URL') . 'journals/' . $id;
-        $journal = $this->getJSONFromURL($url);
+        $response = $this->getJSONFromURL($url);
 
-        return View::make('journals.show', compact('journal'));
+        return View::make('journals.show', compact('response'));
 	}
 
 
@@ -64,7 +74,15 @@ class JournalController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+        $url = Config::get('constants.API_URL') . 'journals/' . $id;
+        $response = $this->getJSONFromURL($url);
+
+        if( ! $response['isOwner'])
+        {
+            return Redirect::to('/journals/' . $id)->with('message', 'You are not authorized to update this journal entry');
+        }
+
+		return View::make('journals.edit', compact('response'));
 	}
 
 
@@ -76,7 +94,20 @@ class JournalController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$url = Config::get('constants.API_URL') . 'journals/' . $id;
+        $data = [
+            'contents'      => Input::get('contents'),
+            'special_events'=> Input::get('special_events')
+        ];
+
+        $result = json_decode($this->sendCurlRequestToURL($url, json_encode($data), "PUT"), true);
+
+        if(isset($result['error']))
+        {
+            return Redirect::to('/journals/' , $id , '/edit')->withInput()->with('message', $result['error_description']);
+        }
+
+        return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been updated!');
 	}
 
 
@@ -94,17 +125,17 @@ class JournalController extends \BaseController {
     public function showVolume($volume)
     {
         $url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
-        $journals = $this->getJSONFromURL($url);
+        $response = $this->getJSONFromURL($url);
 
-        return View::make('journals.volume', compact('journals'));
+        return View::make('journals.volume', compact('response'));
     }
 
     public function random($id)
     {
         $url = Config::get('constants.API_URL') . 'journals/random';
-        $journal = $this->getJSONFromURL($url);
+        $response = $this->getJSONFromURL($url);
 
-        return View::make('journals.show', compact('journal'));
+        return View::make('journals.show', compact('response'));
     }
 
 }
