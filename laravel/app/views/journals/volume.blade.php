@@ -1,4 +1,7 @@
 @extends('layouts.sidebar')
+@section('title')
+    :: Volume {{ Route::getCurrentRoute()->getParameter('volume') }}
+@stop
 @section('styles')
     #journal-nav {
         font-size: 12pt;

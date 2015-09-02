@@ -87,4 +87,9 @@ class HomeController extends BaseController {
 
         return Redirect::to('/');
     }
+
+    public function changelog()
+    {
+        return View::make('changelog');
+    }
 }

@@ -11,6 +11,7 @@
 |
 */
 Route::get('/', ['as' => 'home', 'uses' => 'HomeController@showWelcome']);
+Route::get('changelog', ['as' => 'changelog', 'uses' => 'HomeController@changelog']);
 Route::get('login', ['as' => 'auth.login', 'uses' => 'HomeController@login']);
 Route::get('logout', ['as' => 'auth.logout', 'uses' => 'HomeController@doLogout']);
 Route::post('login', 'HomeController@doLogin');

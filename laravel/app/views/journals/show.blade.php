@@ -1,4 +1,9 @@
 @extends('layouts.master')
+
+@section('title')
+    :: Day {{ $response['journals']['day'] }}
+@stop
+
 @section('content')
   <div class="container">
     @if (Session::get('message') != '')
@@ -31,6 +36,6 @@
           </div>
         @endif
       </div>
-      <small class="pull-right">This entry was last edited {{ Carbon\Carbon::parse($response['journals']['updated_at'], 'Asia/Manila')->diffForHumans() }}</small>
+      <small class="pull-right text-muted">This entry was last edited {{ Carbon\Carbon::parse($response['journals']['updated_at'], 'Asia/Manila')->diffForHumans() }}</small>
   </div>
 @stop

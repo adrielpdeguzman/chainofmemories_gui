@@ -1,5 +1,5 @@
 @if (Route::currentRouteName() == 'journals.edit')
-    <h2>DAY {{ $response['journals']['day'] }} | {{  $response['journals']['publish_date'] }}</h2>
+    <h2><a class="pseudolink">DAY {{ $response['journals']['day'] }} | {{  $response['journals']['publish_date'] }}</a></h2>
 @else
     {{ Form::select('publish_date', $dates_without_entry, null, ['class' => 'form-control']) }}
 @endif

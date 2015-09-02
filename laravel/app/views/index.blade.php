@@ -1,4 +1,9 @@
 @extends('layouts.master')
+
+@section('title')
+    :: Home
+@stop
+
 @section('content')
     <div class="container">
         <div class="jumbotron">

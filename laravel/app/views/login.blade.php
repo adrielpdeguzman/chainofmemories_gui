@@ -1,4 +1,9 @@
 @extends('layouts.master')
+
+@section('title')
+    :: Sign In
+@stop
+
 @section('content')
     <div class="container">
         {{ Form::open(['role' => 'form', 'class' => 'text-center col-md-4 col-md-offset-4']) }}

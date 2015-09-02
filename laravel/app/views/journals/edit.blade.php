@@ -1,4 +1,9 @@
 @extends('layouts.master')
+
+@section('title')
+    :: Update Journal Entry
+@stop
+
 @section('content')
     <div class="container">
         @if (Session::get('message') != '')

@@ -1,5 +1,9 @@
 @extends('layouts.sidebar')
 
+@section('title')
+    :: Search Journal
+@stop
+
 @section('sidebar')
     <div class="panel panel-default">
         <div class="panel-body">
