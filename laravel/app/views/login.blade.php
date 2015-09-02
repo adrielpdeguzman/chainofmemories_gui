@@ -15,7 +15,7 @@
                 {{ Form::password('password', ['class' => 'form-control', 'required', 'placeholder' => 'Password']) }}
             </div>
 
-            {{ Form::submit('Login', ['class' => 'form-control btn btn-block btn-info'])}}
+            {{ Form::submit('Login', ['class' => 'form-control btn btn-block btn-info']) }}
         {{ Form::close() }}
     </div>
 @stop

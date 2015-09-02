@@ -24,3 +24,26 @@ footer {
     padding-top: 10px;
     font-style: italic;
 }
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -65px;
+    visibility: hidden;
+}
+
+a.pseudolink:hover {
+    text-decoration: none;
+}
+
+p.journal-contents {
+    text-indent: 3em;
+}
+
+.panel-heading hr {
+    margin: 2px 0;
+}
+
+.panel-body {
+    min-height: 250px;
+}

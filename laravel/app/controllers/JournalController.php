@@ -9,7 +9,9 @@ class JournalController extends \BaseController {
 	 */
 	public function index()
 	{
-		return Redirect::to(Request::url() . '/volume/1');
+        $current_volume = Carbon\Carbon::today()->diffInMonths(Config::get('constants.ANNIVERSARY')) + (Config::get('constants.ANNIVERSARY')->day != Carbon\Carbon::today()->day ? 2 : 3);
+
+		return Redirect::to(Request::url() . '/volume/' . $current_volume);
 	}
 
 
@@ -40,7 +42,7 @@ class JournalController extends \BaseController {
             'special_events'=> Input::get('special_events')
         ];
 
-        $result = json_decode($this->sendCurlRequestToURL($url, json_encode($data)), true);
+        $result = $this->sendCurlRequestToURL($url, json_encode($data));
 
         if(isset($result['error']))
         {
@@ -100,7 +102,7 @@ class JournalController extends \BaseController {
             'special_events'=> Input::get('special_events')
         ];
 
-        $result = json_decode($this->sendCurlRequestToURL($url, json_encode($data), "PUT"), true);
+        $result = $this->sendCurlRequestToURL($url, json_encode($data), "PUT");
 
         if(isset($result['error']))
         {
@@ -127,10 +129,15 @@ class JournalController extends \BaseController {
         $url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
         $response = $this->getJSONFromURL($url);
 
-        return View::make('journals.volume', compact('response'));
+        $url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+        $volumes_with_start_date = $this->getJSONFromURL($url2);
+
+        $special_events = "";
+
+        return View::make('journals.volume', compact('response', 'volumes_with_start_date', 'special_events'));
     }
 
-    public function random($id)
+    public function random()
     {
         $url = Config::get('constants.API_URL') . 'journals/random';
         $response = $this->getJSONFromURL($url);
@@ -138,4 +145,30 @@ class JournalController extends \BaseController {
         return View::make('journals.show', compact('response'));
     }
 
+    public function search()
+    {
+        $url = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+        $volumes_with_start_date = $this->getJSONFromURL($url);
+
+        $volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
+
+        return View::make('journals.search', compact('volumes_with_start_date'));
+    }
+
+    public function doSearch()
+    {
+        $url = Config::get('constants.API_URL') . 'journals/search';
+
+        $query_string = "?text=" . urlencode(Input::get('text'));
+        $query_string .= "&volume=" . Input::get('volume');
+
+        $url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+        $volumes_with_start_date = $this->getJSONFromURL($url2);
+
+        $volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
+
+        $response = $this->getJSONFromURL($url . $query_string);
+
+        return View::make('journals.search', compact('response', 'volumes_with_start_date'));
+    }
 }

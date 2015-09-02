@@ -20,8 +20,13 @@
         @include('includes.header')
     </header>
 
-    <div id="main" class="container">
-        @yield('content')
+    <div class="container">
+        <div id="sidebar" class="col-md-3">
+            @yield('sidebar')
+        </div>
+        <div id="main" class="col-md-9">
+            @yield('content')
+        </div>
     </div>
 
     <footer>

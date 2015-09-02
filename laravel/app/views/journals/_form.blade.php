@@ -10,7 +10,7 @@
 </div>
 
 <div class="form-group">
-    {{ Form::label('special_events', 'Journal Contents') }}
+    {{ Form::label('special_events', 'Special Events') }}
     {{ Form::textarea('special_events', (isset($response['journals']) ? $response['journals']['special_events'] : ''), ['class' => 'form-control', 'rows' => '4'])}}
 </div>
 

@@ -22,6 +22,10 @@ class HomeController extends BaseController {
 
     public function login()
     {
+        if (Session::has('access_token'))
+        {
+            return Redirect::route('home');
+        }
         return View::make('login');
     }
 
@@ -70,7 +74,9 @@ class HomeController extends BaseController {
                 ->with('message', $result['error_description']);
         }
 
+        Session::put('refresh_token', ($result['refresh_token']));
         Session::put('access_token', ($result['access_token']));
+        Session::put('oauth_token_expiry', (date(time()) + $result['expires_in']));
 
         return Redirect::intended('/');
     }

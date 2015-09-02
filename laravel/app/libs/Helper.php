@@ -2,14 +2,21 @@
 
 class Helper {
 
-    public static function splitStringIntoParagraphs($string, $attribs = null)
+    public static function splitStringIntoParagraphs($string, $attribs = null, $limit = 0)
     {
         $paragraphs = preg_split('#(\r\n?|\n)+#', $string);
         $return = '';
+        $count = 0;
 
         foreach ($paragraphs as $paragraph)
         {
             $return .= '<p' . Helper::parseAttributes($attribs) .'>' . $paragraph . '</p>';
+            $count++;
+
+            if ($count = $limit && $limit != 0)
+            {
+                break;
+            }
         }
 
         return $return;
