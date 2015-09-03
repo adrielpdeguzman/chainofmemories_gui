@@ -1,7 +1,9 @@
 @section('title')
     :: Changelogs
 @stop
+
 @extends('layouts.master')
+
 @section('content')
     <div class="container">
         <h2>September 7, 2015</h2>

@@ -7,8 +7,8 @@
 @section('content')
     <div class="container">
         <div class="jumbotron">
-        <h1>Chain of Memories</h1>
-        <p>Where memories are cherished and kept forever ~</p>
+            <h1>Chain of Memories</h1>
+            <p>Where memories are cherished and kept forever ~</p>
         </div>
 
         <div class="row">
@@ -25,8 +25,8 @@
             <div class="col-md-4 hidden">
                 <h3>Photos</h3>
                 <p>A picture conveys a thousand words! View all those happy moments, grouped by certain events and venues! Let's walk across memory lane!
-                <p><a class="btn btn-default" href="#" role="button">View Photos &raquo;</a></p>
+                    <p><a class="btn btn-default" href="#" role="button">View Photos &raquo;</a></p>
+                </div>
             </div>
         </div>
-    </div>
 @stop

@@ -9,7 +9,7 @@ class JournalController extends \BaseController {
 	 */
 	public function index()
 	{
-        $current_volume = Carbon\Carbon::today()->diffInMonths(Config::get('constants.ANNIVERSARY')) + (Config::get('constants.ANNIVERSARY')->day != Carbon\Carbon::today()->day ? 2 : 3);
+		$current_volume = Carbon\Carbon::today()->diffInMonths(Config::get('constants.ANNIVERSARY')) + (Config::get('constants.ANNIVERSARY')->day != Carbon\Carbon::today()->day ? 2 : 3);
 
 		return Redirect::to(Request::url() . '/volume/' . $current_volume);
 	}
@@ -22,7 +22,7 @@ class JournalController extends \BaseController {
 	 */
 	public function create()
 	{
-        $dates_without_entry = $this->getJSONFromURL(Config::get('constants.API_URL') . 'journals/getDatesWithoutEntry');
+		$dates_without_entry = $this->getJSONFromURL(Config::get('constants.API_URL') . 'journals/getDatesWithoutEntry');
 
 		return View::make('journals.create', compact('dates_without_entry'));
 	}
@@ -35,21 +35,21 @@ class JournalController extends \BaseController {
 	 */
 	public function store()
 	{
-        $url = Config::get('constants.API_URL') . 'journals';
-        $data = [
-            'publish_date'  => Input::get('publish_date'),
-            'contents'      => Input::get('contents'),
-            'special_events'=> Input::get('special_events')
-        ];
+		$url = Config::get('constants.API_URL') . 'journals';
+		$data = [
+		'publish_date'  => Input::get('publish_date'),
+		'contents'      => Input::get('contents'),
+		'special_events'=> Input::get('special_events')
+		];
 
-        $result = $this->sendCurlRequestToURL($url, json_encode($data));
+		$result = $this->sendCurlRequestToURL($url, json_encode($data));
 
-        if(isset($result['error']))
-        {
-            return Redirect::to('/journals/create')->withInput()->with('message', $result['error_description']);
-        }
+		if(isset($result['error']))
+		{
+			return Redirect::to('/journals/create')->withInput()->with('message', $result['error_description']);
+		}
 
-        return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been created!');
+		return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been created!');
 	}
 
 
@@ -62,9 +62,9 @@ class JournalController extends \BaseController {
 	public function show($id)
 	{
 		$url = Config::get('constants.API_URL') . 'journals/' . $id;
-        $response = $this->getJSONFromURL($url);
+		$response = $this->getJSONFromURL($url);
 
-        return View::make('journals.show', compact('response'));
+		return View::make('journals.show', compact('response'));
 	}
 
 
@@ -76,13 +76,13 @@ class JournalController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-        $url = Config::get('constants.API_URL') . 'journals/' . $id;
-        $response = $this->getJSONFromURL($url);
+		$url = Config::get('constants.API_URL') . 'journals/' . $id;
+		$response = $this->getJSONFromURL($url);
 
-        if( ! $response['isOwner'])
-        {
-            return Redirect::to('/journals/' . $id)->with('message', 'You are not authorized to update this journal entry');
-        }
+		if( ! $response['isOwner'])
+		{
+			return Redirect::to('/journals/' . $id)->with('message', 'You are not authorized to update this journal entry');
+		}
 
 		return View::make('journals.edit', compact('response'));
 	}
@@ -97,19 +97,19 @@ class JournalController extends \BaseController {
 	public function update($id)
 	{
 		$url = Config::get('constants.API_URL') . 'journals/' . $id;
-        $data = [
-            'contents'      => Input::get('contents'),
-            'special_events'=> Input::get('special_events')
-        ];
+		$data = [
+		'contents'      => Input::get('contents'),
+		'special_events'=> Input::get('special_events')
+		];
 
-        $result = $this->sendCurlRequestToURL($url, json_encode($data), "PUT");
+		$result = $this->sendCurlRequestToURL($url, json_encode($data), "PUT");
 
-        if(isset($result['error']))
-        {
-            return Redirect::to('/journals/' , $id , '/edit')->withInput()->with('message', $result['error_description']);
-        }
+		if(isset($result['error']))
+		{
+			return Redirect::to('/journals/' , $id , '/edit')->withInput()->with('message', $result['error_description']);
+		}
 
-        return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been updated!');
+		return Redirect::to('/journals/' . $result['journals']['id'])->with('message', 'Your journal entry has been updated!');
 	}
 
 
@@ -124,51 +124,51 @@ class JournalController extends \BaseController {
 		//
 	}
 
-    public function showVolume($volume)
-    {
-        $url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
-        $response = $this->getJSONFromURL($url);
+	public function showVolume($volume)
+	{
+		$url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
+		$response = $this->getJSONFromURL($url);
 
-        $url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-        $volumes_with_start_date = $this->getJSONFromURL($url2);
+		$url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+		$volumes_with_start_date = $this->getJSONFromURL($url2);
 
-        $special_events = "";
+		$special_events = "";
 
-        return View::make('journals.volume', compact('response', 'volumes_with_start_date', 'special_events'));
-    }
+		return View::make('journals.volume', compact('response', 'volumes_with_start_date', 'special_events'));
+	}
 
-    public function random()
-    {
-        $url = Config::get('constants.API_URL') . 'journals/random';
-        $response = $this->getJSONFromURL($url);
+	public function random()
+	{
+		$url = Config::get('constants.API_URL') . 'journals/random';
+		$response = $this->getJSONFromURL($url);
 
-        return View::make('journals.show', compact('response'));
-    }
+		return View::make('journals.show', compact('response'));
+	}
 
-    public function search()
-    {
-        $url = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-        $volumes_with_start_date = $this->getJSONFromURL($url);
+	public function search()
+	{
+		$url = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+		$volumes_with_start_date = $this->getJSONFromURL($url);
 
-        $volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
+		$volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
 
-        return View::make('journals.search', compact('volumes_with_start_date'));
-    }
+		return View::make('journals.search', compact('volumes_with_start_date'));
+	}
 
-    public function doSearch()
-    {
-        $url = Config::get('constants.API_URL') . 'journals/search';
+	public function doSearch()
+	{
+		$url = Config::get('constants.API_URL') . 'journals/search';
 
-        $query_string = "?text=" . urlencode(Input::get('text'));
-        $query_string .= "&volume=" . Input::get('volume');
+		$query_string = "?text=" . urlencode(Input::get('text'));
+		$query_string .= "&volume=" . Input::get('volume');
 
-        $url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-        $volumes_with_start_date = $this->getJSONFromURL($url2);
+		$url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
+		$volumes_with_start_date = $this->getJSONFromURL($url2);
 
-        $volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
+		$volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
 
-        $response = $this->getJSONFromURL($url . $query_string);
+		$response = $this->getJSONFromURL($url . $query_string);
 
-        return View::make('journals.search', compact('response', 'volumes_with_start_date'));
-    }
+		return View::make('journals.search', compact('response', 'volumes_with_start_date'));
+	}
 }

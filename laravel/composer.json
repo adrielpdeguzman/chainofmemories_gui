@@ -5,13 +5,14 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.2.*",
-        "hieu-le/active": "~1.0"
+		"hieu-le/active": "~1.0",
+		"guzzlehttp/guzzle": "~6.0"
 	},
 	"autoload": {
 		"classmap": [
 			"app/commands",
 			"app/controllers",
-            "app/libs",
+			"app/libs",
 			"app/models",
 			"app/database/migrations",
 			"app/database/seeds",

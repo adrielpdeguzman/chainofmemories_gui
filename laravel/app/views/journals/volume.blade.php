@@ -1,10 +1,12 @@
 @extends('layouts.sidebar')
+
 @section('title')
     :: Volume {{ Route::getCurrentRoute()->getParameter('volume') }}
 @stop
+
 @section('styles')
     #journal-nav {
-        font-size: 12pt;
+    font-size: 12pt;
     }
 @stop
 
@@ -34,6 +36,7 @@
                 {{ Helper::splitStringIntoParagraphs($journal['contents'], ['class' => 'journal-contents']) }}
             </div>
         </div>
+
         @if ($journal['special_events'] != '')
             <div class='special-events-list hide'>
                 <em>
@@ -45,7 +48,9 @@
                 </ul>
             </div>
         @endif
+
     @endforeach
+
     <div class="journal-entry panel panel-default">
         <a href="#" class="anchor" id="special-events"></a>
         <div class="panel-heading">
@@ -57,27 +62,27 @@
 @stop
 
 @section('scripts')
-    $(function(){
-        $('[name="volume"]').change(function(e) {
-            window.location.href = $(this).val();
-        });
-    });
+$(function(){
+$('[name="volume"]').change(function(e) {
+window.location.href = $(this).val();
+});
+});
 
-    var journal_nav = "";
-    var last_date = "";
-    $( ".journal-entry" ).each(function(index) {
-        nav_label = $(this).children().children('.journal-heading').text();
-        if (last_date == nav_label)
-        {
-            return true;
-        }
-        journal_nav += "<li><a href=\"#" + $(this).children('.anchor').attr('id') + "\" class=\"center-block\">" + nav_label  + "</a></li>";
-        last_date = nav_label;
-    });
+var journal_nav = "";
+var last_date = "";
+$( ".journal-entry" ).each(function(index) {
+nav_label = $(this).children().children('.journal-heading').text();
+if (last_date == nav_label)
+{
+  return true;
+}
+journal_nav += "<li><a href=\"#" + $(this).children('.anchor').attr('id') + "\" class=\"center-block\">" + nav_label  + "</a></li>";
+last_date = nav_label;
+});
 
-    $( ".special-events-list").each(function(index) {
-        $(this).removeClass('hide').appendTo('#special-events-content');
-    });
+$( ".special-events-list").each(function(index) {
+$(this).removeClass('hide').appendTo('#special-events-content');
+});
 
-    $('#journal-nav').html(journal_nav);
+$('#journal-nav').html(journal_nav);
 @stop

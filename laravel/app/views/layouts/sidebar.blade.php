@@ -12,7 +12,7 @@
     {{ HTML::style('css/main.css') }}
 
     <style>
-        @yield('styles')
+    @yield('styles')
     </style>
 </head>
 <body>
@@ -37,9 +37,9 @@
     {{ HTML::script('js/bootstrap.min.js') }}
 
     <script>
-        $('.alert').not('.alert-important').delay(2500).slideUp(500);
+    $('.alert').not('.alert-important').delay(2500).slideUp(500);
 
-        @yield('scripts')
+    @yield('scripts')
     </script>
 </body>
 </html>

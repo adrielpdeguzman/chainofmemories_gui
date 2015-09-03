@@ -15,7 +15,7 @@
             <p>{{ link_to_route('journals.index', 'View Journals &raquo;', null, ['class' => 'btn btn-default']) }}</p>
         @else
             {{ Form::open(['role' => 'form', 'route' => 'journals.store']) }}
-               @include('journals._form', ['submitButtonText' => 'Create Journal Entry'])
+        @include('journals._form', ['submitButtonText' => 'Create Journal Entry'])
             {{ Form::close() }}
         @endif
     </div>
