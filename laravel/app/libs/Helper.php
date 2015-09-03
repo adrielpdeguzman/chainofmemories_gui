@@ -29,7 +29,11 @@ class Helper {
 
         foreach ($items as $item)
         {
-            $return .= '<li' . Helper::parseAttributes($attribs) .'>' . $item . '</li>';
+            $item = trim($item);
+            if ($item != '')
+            {
+                $return .= '<li' . Helper::parseAttributes($attribs) .'>' . $item . '</li>';
+            }
         }
 
         return $return;
