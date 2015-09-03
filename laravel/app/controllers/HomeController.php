@@ -32,19 +32,29 @@ class HomeController extends BaseController {
 	public function doLogin()
 	{
 		$url = Config::get('constants.API_URL') . 'oauth/access_token';
+
 		$credentials = [
-		'username'  => Input::get('username'),
-		'password'  => Input::get('password')
+			'username'		=> Input::get('username'),
+			'password'		=> Input::get('password'),
 		];
+
 		$rules = [
-		'username'  => 'required',
-		'password'  => 'required'
+			'username'  => 'required',
+			'password'  => 'required'
 		];
-		$login_string   = 'grant_type=password';
-		$login_string  .= '&client_id=' . urlencode(Config::get('constants.CLIENT_ID'));
-		$login_string  .= '&client_secret=' . urlencode(Config::get('constants.CLIENT_SECRET'));
-		$login_string  .= '&username=' . urlencode($credentials['username']);
-		$login_string  .= '&password=' . urlencode($credentials['password']);
+
+
+		$response = $this->client->post($url, [
+				'body' 		=> [
+					'grant_type'	=> 'password',
+					'username'		=> Input::get('username'),
+					'password'		=> Input::get('password'),
+					'client_id'		=> Config::get('constants.CLIENT_ID'),
+					'client_secret'	=> Config::get('constants.CLIENT_SECRET')
+				],
+				'exceptions' => 'false'
+			])
+			->json();
 
 		$errors = $this->validateAndReturnErrors($credentials, $rules);
 
@@ -55,28 +65,16 @@ class HomeController extends BaseController {
 			->withInput(Input::except('password'));
 		}
 
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $login_string);
-		curl_setopt($ch,CURLOPT_POST, 5);
-		curl_setopt($ch, CURLOPT_URL,$url);
-
-		$result = json_decode(curl_exec($ch), true);
-
-		curl_close($ch);
-
-		if (isset($result['error']))
+		if (isset($response['error']))
 		{
 			return Redirect::to('login')
 			->withInput(Input::except('password'))
-			->with('message', $result['error_description']);
+			->with('message', $response['error_description']);
 		}
 
-		Session::put('refresh_token', ($result['refresh_token']));
-		Session::put('access_token', ($result['access_token']));
-		Session::put('oauth_token_expiry', (date(time()) + $result['expires_in']));
+		Session::put('refresh_token', ($response['refresh_token']));
+		Session::put('access_token', ($response['access_token']));
+		Session::put('oauth_token_expiry', (date(time()) + $response['expires_in']));
 
 		return Redirect::intended('/');
 	}

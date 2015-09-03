@@ -9,12 +9,16 @@ class BaseController extends Controller {
 	 *
 	 * @var Client
 	 **/
-	protected $client = new Client([
-		// Base URI is used with relative requests
-		'base_uri' => 'http://httpbin.org',
-		// You can set any number of default request options.
-		'timeout'  => 2.0,
-		]);
+	protected $client;
+
+	public function __construct()
+	{
+		$client_params = [
+			'base_url' => Config::get('constants.API_URL')
+			];
+
+		$this->client = new Client($client_params);
+	}
 
 	/**
 	 * Setup the layout used by the controller.
@@ -31,33 +35,31 @@ class BaseController extends Controller {
 
 	protected function refreshAccessToken()
 	{
-		$url = Config::get('constants.API_URL') . 'oauth/access_token';
+		$url = 'oauth/access_token';
 
 		if (Session::has('refresh_token'))
 		{
-			$login_string   = 'grant_type=refresh_token';
-			$login_string  .= '&client_id=' . urlencode(Config::get('constants.CLIENT_ID'));
-			$login_string  .= '&client_secret=' . urlencode(Config::get('constants.CLIENT_SECRET'));
-			$login_string  .= '&refresh_token=' . Session::get('refresh_token');
+			$response = $this->client->post($url, [
+				'body' 		=> [
+					'grant_type'	=> 'refresh_token',
+					'refresh_token'	=> Session::get('refresh_token'),
+					'client_id'		=> Config::get('constants.CLIENT_ID'),
+					'client_secret'	=> Config::get('constants.CLIENT_SECRET')
+				],
+				'exceptions' => 'false'
+			])
+			->json();
 
-			$ch = curl_init();
-
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch,CURLOPT_POSTFIELDS, $login_string);
-			curl_setopt($ch,CURLOPT_POST, 4);
-			curl_setopt($ch, CURLOPT_URL,$url);
-
-			$result = json_decode(curl_exec($ch), true);
-
-			curl_close($ch);
-
-			if(isset($result['access_token']))
+			if(isset($response['access_token']))
 			{
-				Session::put('access_token', $result['access_token']);
-				Session::put('refresh_token', $result['refresh_token']);
-				Session::put('oauth_token_expiry', (date(time()) + $result['expires_in']));
+				Session::put('access_token', $response['access_token']);
+				Session::put('refresh_token', $response['refresh_token']);
+				Session::put('oauth_token_expiry', (date(time()) + $response['expires_in']));
+
+				return true;
 			}
+
+			return Redirect::guest('login');
 		}
 
 		return Redirect::guest('login');
@@ -77,7 +79,6 @@ class BaseController extends Controller {
 			'Authorization: Bearer ' . Session::get('access_token'),
 			'Content-Type: application/json'
 			]);
-		curl_setopt($ch, CURLOPT_URL,$url);
 		curl_setopt($ch, CURLOPT_URL, $url);
 
 		$result = json_decode(curl_exec($ch), true);
@@ -122,6 +123,23 @@ class BaseController extends Controller {
 		}
 
 		return $result;
+	}
+
+	protected function sendGuzzleRequest($http_verb = 'GET', $url, $data = null)
+	{
+		if (date(time()) >= Session::get('oauth_token_expiry'))
+		{
+			$this->refreshAccessToken();
+		}
+
+		$request = $this->client->createRequest($http_verb, $url, [
+			'json' 		=> $data,
+			'headers'	=> [
+				'Authorization'		=> 'Bearer ' . Session::get('access_token')
+				]
+			]);
+
+		return $this->client->send($request)->json();
 	}
 
 	protected function validateAndReturnErrors($data, $rules)

@@ -22,7 +22,8 @@ class JournalController extends \BaseController {
 	 */
 	public function create()
 	{
-		$dates_without_entry = $this->getJSONFromURL(Config::get('constants.API_URL') . 'journals/getDatesWithoutEntry');
+		$url = 'journals/getDatesWithoutEntry';
+		$dates_without_entry = $this->sendGuzzleRequest('GET', 'journals/getDatesWithoutEntry');
 
 		return View::make('journals.create', compact('dates_without_entry'));
 	}
@@ -35,14 +36,14 @@ class JournalController extends \BaseController {
 	 */
 	public function store()
 	{
-		$url = Config::get('constants.API_URL') . 'journals';
+		$url = 'journals';
 		$data = [
-		'publish_date'  => Input::get('publish_date'),
-		'contents'      => Input::get('contents'),
-		'special_events'=> Input::get('special_events')
-		];
+			'publish_date'  => Input::get('publish_date'),
+			'contents'      => Input::get('contents'),
+			'special_events'=> Input::get('special_events')
+			];
 
-		$result = $this->sendCurlRequestToURL($url, json_encode($data));
+		$result = $this->sendGuzzleRequest('POST', $url, $data);
 
 		if(isset($result['error']))
 		{
@@ -61,8 +62,8 @@ class JournalController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$url = Config::get('constants.API_URL') . 'journals/' . $id;
-		$response = $this->getJSONFromURL($url);
+		$url = 'journals/' . $id;
+		$response = $this->sendGuzzleRequest('GET', $url);
 
 		return View::make('journals.show', compact('response'));
 	}
@@ -76,8 +77,8 @@ class JournalController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$url = Config::get('constants.API_URL') . 'journals/' . $id;
-		$response = $this->getJSONFromURL($url);
+		$url ='journals/' . $id;
+		$response = $this->sendGuzzleRequest('GET', $url);
 
 		if( ! $response['isOwner'])
 		{
@@ -96,13 +97,13 @@ class JournalController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$url = Config::get('constants.API_URL') . 'journals/' . $id;
+		$url = 'journals/' . $id;
 		$data = [
 		'contents'      => Input::get('contents'),
 		'special_events'=> Input::get('special_events')
 		];
 
-		$result = $this->sendCurlRequestToURL($url, json_encode($data), "PUT");
+		$result = $this->sendGuzzleRequest('PUT', $url, $data);
 
 		if(isset($result['error']))
 		{
@@ -126,11 +127,11 @@ class JournalController extends \BaseController {
 
 	public function showVolume($volume)
 	{
-		$url = Config::get('constants.API_URL') . 'journals/volume/' . $volume;
-		$response = $this->getJSONFromURL($url);
+		$url = 'journals/volume/' . $volume;
+		$response = $this->sendGuzzleRequest('GET', $url);
 
 		$url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-		$volumes_with_start_date = $this->getJSONFromURL($url2);
+		$volumes_with_start_date = $this->sendGuzzleRequest('GET', $url2);
 
 		$special_events = "";
 
@@ -139,16 +140,16 @@ class JournalController extends \BaseController {
 
 	public function random()
 	{
-		$url = Config::get('constants.API_URL') . 'journals/random';
-		$response = $this->getJSONFromURL($url);
+		$url = 'journals/random';
+		$response = $this->sendGuzzleRequest('GET', $url);
 
 		return View::make('journals.show', compact('response'));
 	}
 
 	public function search()
 	{
-		$url = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-		$volumes_with_start_date = $this->getJSONFromURL($url);
+		$url = 'journals/getVolumesWithStartDate';
+		$volumes_with_start_date = $this->sendGuzzleRequest('GET', $url);
 
 		$volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
 
@@ -157,17 +158,17 @@ class JournalController extends \BaseController {
 
 	public function doSearch()
 	{
-		$url = Config::get('constants.API_URL') . 'journals/search';
+		$url = 'journals/search';
 
 		$query_string = "?text=" . urlencode(Input::get('text'));
 		$query_string .= "&volume=" . Input::get('volume');
 
 		$url2 = Config::get('constants.API_URL') . 'journals/getVolumesWithStartDate';
-		$volumes_with_start_date = $this->getJSONFromURL($url2);
+		$volumes_with_start_date = $this->sendGuzzleRequest('GET', $url2);
 
 		$volumes_with_start_date = ['0' => 'All Volumes'] + $volumes_with_start_date;
 
-		$response = $this->getJSONFromURL($url . $query_string);
+		$response = $this->sendGuzzleRequest('GET', $url . $query_string);
 
 		return View::make('journals.search', compact('response', 'volumes_with_start_date'));
 	}
