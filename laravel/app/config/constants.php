@@ -8,7 +8,11 @@ if (App::environment() == 'local')
 }
 else
 {
+<<<<<<< HEAD
 	$API_URL = 'http://chainofmemoriesapi.sytes.net/api/v1/';
+=======
+	$API_URL = 'http://chainofmemoriesapi.sytes.net/api/v1';
+>>>>>>> ed15d54a1586ed255e25d8d1ff4e5375d0a07dc8
 }
 return [
     'ANNIVERSARY'   => Carbon\Carbon::create(2013, 12, 7, 0, 0, 0, 'Asia/Manila'),
